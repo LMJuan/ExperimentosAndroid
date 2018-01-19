@@ -12,16 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <com.santalu.diagonalimageview.DiagonalImageView
             android:id="@+id/img_itemlist_user_thumb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:di_borderEnabled="false"
+            app:di_direction="bottom"
+            app:di_overlap="10dp"
+            app:di_position="right"/>
 
         <TextView
             android:id="@+id/tv_itemlist_user_name"
