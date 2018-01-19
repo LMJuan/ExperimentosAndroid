@@ -43,7 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     private void animateItem(UserAdapter.UserViewHolder holder, int position) {
         if(position > lastPosition) {
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.left_from_right);
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.left_from_right_short);
             holder.itemView.startAnimation(animation);
             lastPosition = position;
         }
