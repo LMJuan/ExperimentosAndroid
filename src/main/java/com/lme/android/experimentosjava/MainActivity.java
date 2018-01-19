@@ -7,10 +7,10 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
@@ -47,6 +47,12 @@ public class MainActivity extends Activity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         userAdapter = new UserAdapter(userList, this);
+        userAdapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("CONTROL", "Pulsado elemento " + recyclerView.getChildLayoutPosition(view));
+            }
+        });
         LayoutAnimationController animatorController = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation);
         recyclerView.setLayoutAnimation(animatorController);
         recyclerView.setAdapter(userAdapter);

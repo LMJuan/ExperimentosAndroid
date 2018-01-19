@@ -13,11 +13,12 @@ import android.widget.TextView;
 import java.util.List;
 
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> implements View.OnClickListener {
 
     private List<User> userList;
     private Context context;
     private int lastPosition = -1;
+    private View.OnClickListener listener;
 
     UserAdapter(List<User> userList, Context context) {
         this.userList = userList;
@@ -27,7 +28,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public UserAdapter.UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_list_item, parent, false);
-        return  new UserViewHolder(itemView);
+        itemView.setOnClickListener(this);
+        return new UserViewHolder(itemView);
     }
 
     @Override
@@ -52,6 +54,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public int getItemCount() {
         return userList.size();
+    }
+
+    public void setOnClickListener(View.OnClickListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (listener != null)
+            listener.onClick(view);
     }
 
     class UserViewHolder extends RecyclerView.ViewHolder {
