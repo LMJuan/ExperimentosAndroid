@@ -1,16 +1,16 @@
 package com.lme.android.experimentosjava;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -31,10 +31,9 @@ import javax.net.ssl.HttpsURLConnection;
 public class MainActivity extends Activity {
 
     private static List<User> userList = new ArrayList<>();
-    private RecyclerView recyclerView;
     UserAdapter userAdapter;
 
-    private ProgressBar progressBar;
+    private SwipeRefreshLayout swipeRefresh;
     private static final String API_URL = "https://randomuser.me/api/?results=30&nat=es";
 
     @Override
@@ -42,17 +41,28 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        progressBar = findViewById(R.id.progressBar);
-        recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         userAdapter = new UserAdapter(userList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(userAdapter);
 
+        swipeRefresh = findViewById(R.id.swiperefresh);
+        swipeRefresh.setColorSchemeColors(
+                getResources().getColor(R.color.colorAccent, null)
+        );
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new RetrieveUsersData().execute();
+            }
+        });
+
         new RetrieveUsersData().execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class RetrieveUsersData extends AsyncTask<Void, Void, Boolean> {
 
         private HttpsURLConnection urlConnection;
@@ -61,7 +71,7 @@ public class MainActivity extends Activity {
         protected void onPreExecute() {
             userList.clear();
             userAdapter.notifyDataSetChanged();
-            progressBar.setVisibility(View.VISIBLE);
+            swipeRefresh.setRefreshing(true);
         }
 
         @Override
@@ -115,7 +125,7 @@ public class MainActivity extends Activity {
                 userAdapter.notifyDataSetChanged();
             }
 
-            progressBar.setVisibility(View.GONE);
+            swipeRefresh.setRefreshing(false);
             Log.e("CONTROL", "Operación finalizada");
         }
     }
