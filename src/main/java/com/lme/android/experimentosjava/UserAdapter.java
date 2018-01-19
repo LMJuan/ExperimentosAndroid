@@ -1,9 +1,12 @@
 package com.lme.android.experimentosjava;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,29 +15,19 @@ import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
-    class UserViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgThumb;
-        TextView tvName, tvLastName, tvEmail;
-
-        UserViewHolder(View itemView) {
-            super(itemView);
-            imgThumb = itemView.findViewById(R.id.img_itemlist_user_thumb);
-            tvName = itemView.findViewById(R.id.tv_itemlist_user_name);
-            tvLastName = itemView.findViewById(R.id.tv_itemlist_user_lastname);
-            tvEmail = itemView.findViewById(R.id.tv_itemlist_user_email);
-        }
-    }
-
     private List<User> userList;
+    private Context context;
+    private int lastPosition = -1;
 
-    UserAdapter(List<User> userList) {
+    UserAdapter(List<User> userList, Context context) {
         this.userList = userList;
+        this.context = context;
     }
 
     @Override
     public UserAdapter.UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_list_item, parent, false);
-        return new UserViewHolder(itemView);
+        return  new UserViewHolder(itemView);
     }
 
     @Override
@@ -44,10 +37,37 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.tvName.setText(user.getName());
         holder.tvLastName.setText(user.getLastName());
         holder.tvEmail.setText(user.getEmail());
+
+        animateItem(holder, position);
+    }
+
+    private void animateItem(UserAdapter.UserViewHolder holder, int position) {
+        if(position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.left_from_right);
+            holder.itemView.startAnimation(animation);
+            lastPosition = position;
+        }
     }
 
     @Override
     public int getItemCount() {
         return userList.size();
+    }
+
+    class UserViewHolder extends RecyclerView.ViewHolder {
+        public ImageView imgThumb;
+        public TextView tvName, tvLastName, tvEmail;
+
+        public UserViewHolder(View itemView) {
+            super(itemView);
+            imgThumb = itemView.findViewById(R.id.img_itemlist_user_thumb);
+            tvName = itemView.findViewById(R.id.tv_itemlist_user_name);
+            tvLastName = itemView.findViewById(R.id.tv_itemlist_user_lastname);
+            tvEmail = itemView.findViewById(R.id.tv_itemlist_user_email);
+        }
+    }
+
+    public void resetLastPosition() {
+        lastPosition = -1;
     }
 }

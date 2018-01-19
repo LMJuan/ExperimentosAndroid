@@ -11,6 +11,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,6 +34,7 @@ public class MainActivity extends Activity {
 
     private static List<User> userList = new ArrayList<>();
     UserAdapter userAdapter;
+    RecyclerView recyclerView;
 
     private SwipeRefreshLayout swipeRefresh;
     private static final String API_URL = "https://randomuser.me/api/?results=30&nat=es";
@@ -41,11 +44,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        userAdapter = new UserAdapter(userList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        userAdapter = new UserAdapter(userList, this);
+        LayoutAnimationController animatorController = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation);
+        recyclerView.setLayoutAnimation(animatorController);
         recyclerView.setAdapter(userAdapter);
 
         swipeRefresh = findViewById(R.id.swiperefresh);
@@ -70,6 +73,7 @@ public class MainActivity extends Activity {
         @Override
         protected void onPreExecute() {
             userList.clear();
+            userAdapter.resetLastPosition();
             userAdapter.notifyDataSetChanged();
             swipeRefresh.setRefreshing(true);
         }
@@ -118,14 +122,13 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(Boolean ok) {
+            swipeRefresh.setRefreshing(false);
             if (!ok) {
                 Toast.makeText(MainActivity.this, "No se ha podido obtener datos", Toast.LENGTH_SHORT).show();
-                return;
             } else {
-                userAdapter.notifyDataSetChanged();
+                recyclerView.getAdapter().notifyDataSetChanged();
+                recyclerView.scheduleLayoutAnimation();
             }
-
-            swipeRefresh.setRefreshing(false);
             Log.e("CONTROL", "Operación finalizada");
         }
     }
