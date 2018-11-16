@@ -11,5 +11,11 @@ pipeline {
         sh './gradlew compileDebugSources'
       }
     }
+    stage('Build APK') {
+      steps {
+        sh './gradlew assembleDebug'
+        archiveArtifacts '**/*.apk'
+      }
+    }
   }
 }
