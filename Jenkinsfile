@@ -1,7 +1,5 @@
 pipeline {
-  agent {
-    label 'android'
-  }
+  agent any
   options {
     skipStagesAfterUnstable()
   }
